@@ -257,17 +257,14 @@ data."
 			(replace-match to t)
 			t)))
 
-(defmacro amsrefs-convert-bib-macro (patterns)
-  `(cond ,@(mapcar (lambda (pat) `((if (looking-at-case-sensitive ,(car pat))
-				       ,(cdr pat))))
-		   (symbol-value patterns)))) ; replace-match returns nil -- why???!!!
-
 (defun amsrefs-convert-bib ()
   "Convert bib entries, starting at point."
   (interactive)
-  (while (amsrefs-convert-bib-macro
-	  amsrefs-convert-bib-patterns-alist))
-  (message "No match at point, exiting."))
+  (while t
+    (mapc (lambda (pattern)
+	    (when (looking-at-case-sensitive (car pattern))
+	      (eval (cdr pattern))))
+	  amsrefs-convert-bib-patterns-alist)))
 
 (defun amsrefs-convert-to-field-with-stripping (beg end prefix suffix name)
   "Convert the text between BEG and END to an amsrefs field named
